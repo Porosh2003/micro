@@ -1,0 +1,14 @@
+void main() {
+    TRISB = 0x00;   // Set PORTB as output
+    PORTB = 0x00;   // Initialize PORTB as OFF state
+
+    while(1) {
+        PORTB.F0 = 1;   // RB0 ON
+        PORTB.F1 = 0;   // RB1 OFF
+        Delay_ms(1000);
+
+        PORTB.F0 = 0;   // RB0 OFF
+        PORTB.F1 = 1;   // RB1 ON
+        Delay_ms(1000);
+    }
+}

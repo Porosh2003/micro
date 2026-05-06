@@ -1,0 +1,85 @@
+// ===== Servo Functions =====
+
+void servo_neg90() {
+    int i;
+    for(i = 0; i < 50; i++) {
+        PORTB.F0 = 1;
+        delay_us(800);     // -90 degree
+        PORTB.F0 = 0;
+        delay_us(19200);
+    }
+}
+
+void servo0() {
+    int i;
+    for(i = 0; i < 50; i++) {
+        PORTB.F0 = 1;
+        delay_us(1500);    // 0 degree
+        PORTB.F0 = 0;
+        delay_us(18500);
+    }
+}
+
+void servo_pos90() {
+    int i;
+    for(i = 0; i < 50; i++) {
+        PORTB.F0 = 1;
+        delay_us(2200);    // +90 degree
+        PORTB.F0 = 0;
+        delay_us(17800);
+    }
+}
+
+// ===== Main =====
+
+void main() {
+
+    int position = 1;   // start from 0 degree
+    int dir = 1;        // 1 = up, -1 = down
+
+    ADCON1 = 0x06;
+
+    TRISB.F0 = 0;
+    TRISD.F0 = 1;
+
+    PORTB.F0 = 0;
+
+    // Initial position = 0 degree
+    servo0();
+
+    while(1) {
+
+        if (RD0_bit == 0) {
+
+            delay_ms(50);
+
+            if (RD0_bit == 0) {
+
+                while(RD0_bit == 0);
+
+                position = position + dir;
+
+                // boundary check
+                if(position >= 2) {
+                    position = 2;
+                    dir = -1;   // reverse
+                }
+
+                if(position <= 0) {
+                    position = 0;
+                    dir = 1;    // reverse
+                }
+
+                // move servo
+                if(position == 0)
+                    servo_neg90();
+
+                else if(position == 1)
+                    servo0();
+
+                else if(position == 2)
+                    servo_pos90();
+            }
+        }
+    }
+}

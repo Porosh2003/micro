@@ -1,0 +1,54 @@
+sbit LCD_RS at RB0_bit;
+sbit LCD_EN at RB1_bit;
+sbit LCD_D4 at RB2_bit;
+sbit LCD_D5 at RB3_bit;
+sbit LCD_D6 at RB4_bit;
+sbit LCD_D7 at RB5_bit;
+
+sbit LCD_RS_Direction at TRISB0_bit;
+sbit LCD_EN_Direction at TRISB1_bit;
+sbit LCD_D4_Direction at TRISB2_bit;
+sbit LCD_D5_Direction at TRISB3_bit;
+sbit LCD_D6_Direction at TRISB4_bit;
+sbit LCD_D7_Direction at TRISB5_bit;
+
+char display[16];
+
+void main() {
+
+   unsigned int result;
+   float volt, temp;
+
+   TRISB = 0x00;      // LCD output
+   TRISA.F0 = 1;      // RA0 input for LM35
+
+   ADCON1 = 0x80;     // ADC configuration
+
+   LCD_Init();
+   LCD_Cmd(_LCD_CLEAR);
+   LCD_Cmd(_LCD_CURSOR_OFF);
+
+   while(1) {
+
+      // Read ADC value from AN0
+      result = ADC_Read(0);
+
+      // Convert ADC value to voltage
+      volt = result * 5.0 / 1023.0;
+
+      // LM35 temperature calculation
+      temp = volt * 100.0;
+
+      // Display on LCD
+      LCD_Out(1,1,"Temp = ");
+
+      FloatToStr(temp, display);
+
+      LCD_Out(1,8,display);
+
+      LCD_Chr(1,15,223);   // Degree symbol
+      LCD_Out_CP("C");
+
+      Delay_ms(500);
+   }
+}

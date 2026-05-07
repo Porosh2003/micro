@@ -1,0 +1,37 @@
+void main()
+{
+    TRISB = 0x00;
+    PORTB = 0x00;
+
+    // Pin assignment:
+    // RB0 = Red
+    // RB1 = Yellow
+    // RB2 = Green
+
+    while(1)
+    {
+        // Green ON
+        PORTB.F0 = 0;   // Red OFF
+        PORTB.F1 = 0;   // Yellow OFF
+        PORTB.F2 = 1;   // Green ON
+        Delay_ms(5000); // 5 ???????
+
+        // Yellow ON (???????)
+        PORTB.F0 = 0;   // Red OFF
+        PORTB.F1 = 1;   // Yellow ON
+        PORTB.F2 = 0;   // Green OFF
+        Delay_ms(2000); // 2 ???????
+
+        // Red ON
+        PORTB.F0 = 1;   // Red ON
+        PORTB.F1 = 0;   // Yellow OFF
+        PORTB.F2 = 0;   // Green OFF
+        Delay_ms(5000); // 5 ???????
+
+        // Red + Yellow (???? ?????????)
+        PORTB.F0 = 1;   // Red ON
+        PORTB.F1 = 1;   // Yellow ON
+        PORTB.F2 = 0;   // Green OFF
+        Delay_ms(2000); // 2 ???????
+    }
+}

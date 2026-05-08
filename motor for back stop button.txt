@@ -1,0 +1,43 @@
+// PIC16F877A
+// Clock = 8MHz
+
+void main()
+{
+    // PORT setup
+    TRISB = 0x00;   // Motor control output
+    TRISD = 0xFF;   // Button input
+
+    PORTB = 0x00;
+
+    while(1)
+    {
+        // Forward
+        if(RD0_bit == 1)
+        {
+            RB2_bit = 1;   // Enable ON
+
+            RB0_bit = 1;   // IN1
+            RB1_bit = 0;   // IN2
+        }
+
+        // Backward
+        else if(RD1_bit == 1)
+        {
+            RB2_bit = 1;   // Enable ON
+
+            RB0_bit = 0;   // IN1
+            RB1_bit = 1;   // IN2
+        }
+
+        // Stop
+        else if(RD2_bit == 1)
+        {
+            RB2_bit = 0;   // Enable OFF
+
+            RB0_bit = 0;
+            RB1_bit = 0;
+        }
+
+        delay_ms(50);
+    }
+}

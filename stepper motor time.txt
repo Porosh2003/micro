@@ -1,0 +1,35 @@
+void main()
+{
+    TRISD = 0b00000000; // PORT D as output
+
+    while(1)
+    {
+        // --- Clockwise Rotation ---
+        // Ekhane 4-8 bar loop chalate paren proyojon moto joto tuku ghurate chan
+        for(int i=0; i<50; i++)
+        {
+            PORTD = 0b00000011; Delay_ms(10); // Speed barate delay komate paren
+            PORTD = 0b00000110; Delay_ms(10);
+            PORTD = 0b00001100; Delay_ms(10);
+            PORTD = 0b00001001; Delay_ms(10);
+        }
+
+        // 3 Second Stop
+        PORTD = 0b00000000; // Motor off jate gorom na hoy
+        Delay_ms(3000);
+
+        // --- Anti-Clockwise Rotation ---
+        // Sequence-ti thik ulto (Reverse) kora hoyeche
+        for(int i=0; i<50; i++)
+        {
+            PORTD = 0b00001001; Delay_ms(10);
+            PORTD = 0b00001100; Delay_ms(10);
+            PORTD = 0b00000110; Delay_ms(10);
+            PORTD = 0b00000011; Delay_ms(10);
+        }
+
+        // 3 Second Stop
+        PORTD = 0b00000000;
+        Delay_ms(3000);
+    }
+}

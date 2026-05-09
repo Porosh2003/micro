@@ -1,0 +1,78 @@
+// LCD module connections (Keep these as they were)
+sbit LCD_RS at RB0_bit;
+sbit LCD_EN at RB1_bit;
+sbit LCD_D4 at RB2_bit;
+sbit LCD_D5 at RB3_bit;
+sbit LCD_D6 at RB4_bit;
+sbit LCD_D7 at RB5_bit;
+
+sbit LCD_RS_Direction at TRISB0_bit;
+sbit LCD_EN_Direction at TRISB1_bit;
+sbit LCD_D4_Direction at TRISB2_bit;
+sbit LCD_D5_Direction at TRISB3_bit;
+sbit LCD_D6_Direction at TRISB4_bit;
+sbit LCD_D7_Direction at TRISB5_bit;
+
+sbit Relay_Pin at RC0_bit;
+
+// Simple function to display 2-digit integers to save memory
+void Display_Value(char row, char col, int val) {
+    char txt[4];
+    txt[0] = (val / 10) + 48;    // Tens digit
+    txt[1] = (val % 10) + 48;    // Ones digit
+    txt[2] = '\0';
+    Lcd_Out(row, col, txt);
+}
+
+void main() {
+    unsigned int adc_raw;
+    int temp_c;
+    int threshold = 30;
+
+    ADCON1 = 0x0E;
+    TRISA  = 0x01;
+    TRISC  = 0x00;
+    TRISD  = 0x07; // Buttons on RD0, RD1, RD2
+
+    ADC_Init();
+    Lcd_Init();
+    Lcd_Cmd(_LCD_CLEAR);
+    Lcd_Cmd(_LCD_CURSOR_OFF);
+
+    // Load threshold from EEPROM
+    threshold = EEPROM_Read(0x00);
+    if(threshold > 99 || threshold < 0) threshold = 30;
+
+    while(1) {
+        // --- FAST INTEGER MATH ---
+        // Instead of (ADC * 500) / 1023 with floats,
+        // we use (ADC * 100) / 205 which fits in a 16-bit integer safely.
+        adc_raw = ADC_Read(0);
+        temp_c = (adc_raw * 100) / 205;
+
+        // --- DISPLAY ---
+        Lcd_Out(1, 1, "Temp: ");
+        Display_Value(1, 7, temp_c);
+        Lcd_Chr_CP(223); Lcd_Chr_CP('C');
+
+        Lcd_Out(2, 1, "Limit: ");
+        Display_Value(2, 8, threshold);
+        Lcd_Chr_CP(223); Lcd_Chr_CP('C');
+
+        // --- BUTTONS ---
+        if (PORTD.F2 == 0) { // SET/SAVE Button (Simplified check)
+            EEPROM_Write(0x00, threshold);
+            Lcd_Out(2, 12, "SAVED");
+            Delay_ms(500);
+            Lcd_Out(2, 12, "     ");
+        }
+        if (PORTD.F0 == 0) { threshold++; Delay_ms(150); } // INC
+        if (PORTD.F1 == 0) { threshold--; Delay_ms(150); } // DEC
+
+        // --- RELAY LOGIC ---
+        if (temp_c >= threshold) Relay_Pin = 1;
+        else if (temp_c < (threshold - 1)) Relay_Pin = 0;
+
+        Delay_ms(100);
+    }
+}

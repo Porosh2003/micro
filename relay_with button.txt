@@ -1,0 +1,19 @@
+void main() {
+
+    TRISB = 0x00;   // PORTB output (Relay)
+    TRISD.F0 = 1;   // RD0 input (Button)
+
+    PORTB = 0x00;
+
+    while(1) {
+
+        // Button press korle Relay ON
+        if(PORTD.F0 == 1) {
+            PORTB.F0 = 1;
+        }
+        else {
+            PORTB.F0 = 0;
+        }
+
+    }
+}

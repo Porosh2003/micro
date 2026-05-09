@@ -1,24 +1,26 @@
 void MSDelay(unsigned char Time)
 {
-    unsigned char y,z;
-    for(y=0;y<Time;y++)
-        for(z=0;z<20;z++);
+unsigned char y,z;
+for(y=0;y<Time;y++)
+for(z=0;z<20;z++);
 }
 
 void main()
 {
-    TRISB = 0b00000000;  // All PORTC pins as output
-    TRISD = 0b00000000;  // All PORTD pins as output
+TRISB = 0x00;   // Set PORTb as output (Pixel Data)
+TRISD = 0x00;   // Set PORTD as output (Scanner)
 
-    while(1)
-    {       //portd=row ,portb=column
-        PORTD = 0b10000000; PORTB = 0b00000000; MSDelay(10);
-        PORTD = 0b01000000; PORTB = 0b11111111; MSDelay(10);
-        PORTD = 0b00100000; PORTB = 0b11111111; MSDelay(10);
-        PORTD = 0b00010000; PORTB = 0b11011000; MSDelay(10);
-        PORTD = 0b00001000; PORTB = 0b11011000; MSDelay(10);
-        PORTD = 0b00000100; PORTB = 0b11111111; MSDelay(10);
-        PORTD = 0b00000010; PORTB = 0b11111111; MSDelay(10);
-        PORTD = 0b00000001; PORTB = 0b00000000; MSDelay(10);
-    }
+while(1)
+{
+    // Scanning the matrix to display the letter 'Y'
+    PORTD = 0b10000000; PORTB = 0b00000000; MSDelay(10); // Blank edge
+    PORTD = 0b01000000; PORTB = 0b11000000; MSDelay(10); // Top-left branch
+    PORTD = 0b00100000; PORTB = 0b01100000; MSDelay(10); // Left diagonal downward
+    PORTD = 0b00010000; PORTB = 0b00111111; MSDelay(10); // Center vertical stem
+    PORTD = 0b00001000; PORTB = 0b00111111; MSDelay(10); // Center vertical stem
+    PORTD = 0b00000100; PORTB = 0b01100000; MSDelay(10); // Right diagonal upward
+    PORTD = 0b00000010; PORTB = 0b11000000; MSDelay(10); // Top-right branch
+    PORTD = 0b00000001; PORTB = 0b00000000; MSDelay(10); // Blank edge
+}
+
 }
